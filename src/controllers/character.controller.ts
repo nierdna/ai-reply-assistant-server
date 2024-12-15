@@ -3,10 +3,21 @@ import {
   CharacterParamDto,
   ChatRequestDto,
   ConversationParamDto,
+  UpdateCharacterDto,
+  GetCharactersQueryDto,
 } from "@/dtos/character.dto";
 import { CharacterManager } from "@/services/character-manager.service";
-import { Controller, Post, Body, Get, Param, HttpStatus } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  HttpStatus,
+  Put,
+  Query,
+} from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from "@nestjs/swagger";
 
 @Controller("characters")
 @ApiTags("Characters")
@@ -69,6 +80,75 @@ export class CharacterController {
       data: this.characterManager
         .getCharacter(params.id)
         .getConversation(params.chatId),
+    };
+  }
+
+  @Put(":id")
+  @ApiOperation({ summary: "Update an existing character" })
+  @ApiResponse({
+    status: 200,
+    description: "The character has been successfully updated.",
+  })
+  async updateCharacter(
+    @Param() params: CharacterParamDto,
+    @Body() updateCharacterDto: UpdateCharacterDto
+  ) {
+    return {
+      status: HttpStatus.OK,
+      message: "Character updated successfully",
+      data: await this.characterManager.updateCharacter(
+        params.id,
+        updateCharacterDto.name,
+        updateCharacterDto.bio,
+        updateCharacterDto.age,
+        updateCharacterDto.gender,
+        updateCharacterDto.tone,
+        updateCharacterDto.style,
+        updateCharacterDto.purpose
+      ),
+    };
+  }
+
+  @Get()
+  @ApiOperation({ summary: "Get all characters" })
+  @ApiResponse({
+    status: 200,
+    description: "Return all characters with pagination",
+  })
+  @ApiQuery({
+    name: "search",
+    required: false,
+    description: "Search by character name",
+  })
+  @ApiQuery({
+    name: "sortBy",
+    required: false,
+    description: "Field to sort by",
+  })
+  @ApiQuery({ name: "sortOrder", required: false, enum: ["ASC", "DESC"] })
+  @ApiQuery({ name: "page", required: false, description: "Page number" })
+  @ApiQuery({ name: "limit", required: false, description: "Items per page" })
+  async getAllCharacters(@Query() query: GetCharactersQueryDto) {
+    const { characters, total } = await this.characterManager.getAllCharacters(
+      query.search,
+      query.sortBy,
+      query.sortOrder,
+      query.page,
+      query.limit
+    );
+
+    return {
+      status: HttpStatus.OK,
+      message: "Characters retrieved successfully",
+      data: {
+        characters,
+        pagination: {
+          total,
+          page: query.page,
+          limit: query.limit,
+          totalPages: Math.ceil(total / query.limit),
+        },
+      },
     };
   }
 }

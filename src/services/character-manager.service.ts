@@ -112,4 +112,100 @@ export class CharacterManager implements OnModuleInit {
     // Remove from memory
     this.characters.delete(characterId);
   }
+
+  async updateCharacter(
+    characterId: string,
+    name?: string,
+    bio?: string,
+    age?: number,
+    gender?: Gender,
+    tone?: string,
+    style?: string,
+    purpose?: string
+  ): Promise<CharacterEntity> {
+    // Update character entity in database
+    const characterEntity = await this.characterRepository.findOne({
+      where: { id: characterId },
+    });
+
+    if (!characterEntity) {
+      throw new Error(`Character with ID ${characterId} not found`);
+    }
+
+    // Update only defined properties
+    if (name !== undefined) characterEntity.name = name;
+    if (bio !== undefined) characterEntity.bio = bio;
+    if (age !== undefined) characterEntity.age = age;
+    if (gender !== undefined) characterEntity.gender = gender;
+    if (tone !== undefined) characterEntity.tone = tone;
+    if (style !== undefined) characterEntity.style = style;
+    if (purpose !== undefined) characterEntity.purpose = purpose;
+
+    await this.characterRepository.save(characterEntity);
+
+    // Update character instance in memory
+    const character = new Character(
+      characterEntity.name,
+      characterEntity.bio,
+      characterEntity.tone,
+      characterEntity.style,
+      characterEntity.purpose,
+      characterEntity.age,
+      characterEntity.gender,
+      this.aiService
+    );
+    this.characters.set(characterId, character);
+
+    return characterEntity;
+  }
+
+  async getAllCharacters(
+    search?: string,
+    sortBy?: string,
+    sortOrder?: "ASC" | "DESC",
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{ characters: CharacterEntity[]; total: number }> {
+    const queryBuilder =
+      this.characterRepository.createQueryBuilder("character");
+
+    // Apply search filter if provided
+    if (search) {
+      queryBuilder.where("LOWER(character.name) LIKE LOWER(:search)", {
+        search: `%${search}%`,
+      });
+    }
+
+    // Apply sorting if provided
+    if (sortBy) {
+      // Validate sortBy field to prevent SQL injection
+      const allowedSortFields = [
+        "name",
+        "age",
+        "gender",
+        "createdAt",
+        "updatedAt",
+      ];
+      if (allowedSortFields.includes(sortBy)) {
+        queryBuilder.orderBy(`character.${sortBy}`, sortOrder || "ASC");
+      }
+    }
+
+    // Calculate skip for pagination
+    const skip = (page - 1) * limit;
+
+    // Get total count before applying pagination
+    const total = await queryBuilder.getCount();
+
+    // Apply pagination
+    queryBuilder.skip(skip).take(limit);
+
+    // Execute query
+    const characters = await queryBuilder.getMany();
+
+    return {
+      characters,
+      total,
+    };
+  }
 }

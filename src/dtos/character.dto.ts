@@ -4,9 +4,13 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
+  IsIn,
+  IsInt,
 } from "class-validator";
+import { Type } from "class-transformer";
 
 // DTOs
 export class CreateCharacterDto {
@@ -102,4 +106,93 @@ export class ConversationParamDto extends CharacterParamDto {
     example: "chat-123",
   })
   chatId: string;
+}
+
+export class UpdateCharacterDto {
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: "The name of the character",
+    example: "John Doe",
+    required: false,
+  })
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: "The bio of the character",
+    example: "John Doe is a friendly and helpful person",
+    required: false,
+  })
+  bio?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({
+    description: "The age of the character",
+    example: 25,
+    required: false,
+  })
+  age?: number;
+
+  @IsEnum(Gender)
+  @IsOptional()
+  @ApiProperty({
+    description: "The gender of the character",
+    example: Gender.MALE,
+    required: false,
+  })
+  gender?: Gender;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: "The tone of the character",
+    example: "friendly and helpful",
+    required: false,
+  })
+  tone?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: "The style/personality of the character",
+    example: "friendly and helpful",
+    required: false,
+  })
+  style?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: "The purpose/role of the character",
+    example: "technical support assistant",
+    required: false,
+  })
+  purpose?: string;
+}
+
+export class GetCharactersQueryDto {
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsString()
+  sortBy?: string;
+
+  @IsOptional()
+  @IsIn(["ASC", "DESC"])
+  sortOrder?: "ASC" | "DESC";
+
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  page: number = 1;
+
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  limit: number = 10;
 }
