@@ -1,87 +1,12 @@
-import { CharacterManager } from '@/services/character-manager.service';
-import { Controller, Post, Body, Get, Param, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
-
-// DTOs
-class CreateCharacterDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: "The name of the character",
-    example: "John Doe",
-  })
-  name: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: "The bio of the character",
-    example: "John Doe is a friendly and helpful person",
-  })
-  bio: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: "The tone of the character",
-    example: "friendly and helpful",
-  })
-  tone: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: "The style/personality of the character",
-    example: "friendly and helpful",
-  })
-  style: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: "The purpose/role of the character",
-    example: "technical support assistant",
-  })
-  purpose: string;
-}
-
-class ChatRequestDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: "The user message/prompt",
-    example: "How can I deploy a Node.js application?",
-  })
-  prompt: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: "Unique identifier for the conversation",
-    example: "chat-123",
-  })
-  chatId: string;
-}
-
-class CharacterParamDto {
-  @IsUUID()
-  @ApiProperty({
-    description: "The unique identifier of the character",
-    example: "123e4567-e89b-12d3-a456-426614174000",
-  })
-  id: string;
-}
-
-class ConversationParamDto extends CharacterParamDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: "The unique identifier of the conversation",
-    example: "chat-123",
-  })
-  chatId: string;
-}
+import {
+  CreateCharacterDto,
+  CharacterParamDto,
+  ChatRequestDto,
+  ConversationParamDto,
+} from "@/dtos/character.dto";
+import { CharacterManager } from "@/services/character-manager.service";
+import { Controller, Post, Body, Get, Param, HttpStatus } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
 @Controller("characters")
 @ApiTags("Characters")
@@ -101,6 +26,8 @@ export class CharacterController {
       data: await this.characterManager.createCharacter(
         createCharacterDto.name,
         createCharacterDto.bio,
+        createCharacterDto.age,
+        createCharacterDto.gender,
         createCharacterDto.tone,
         createCharacterDto.style,
         createCharacterDto.purpose

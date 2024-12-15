@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { AIService } from "./ai.service";
 import { Conversation } from "./conversation.service";
+import { Gender } from "@/constants/enum";
 
 @Injectable()
 export class Character {
@@ -13,10 +14,12 @@ export class Character {
     private readonly tone: string,
     private readonly style: string,
     private readonly purpose: string,
+    private readonly age: number,
+    private readonly gender: Gender,
     private readonly aiService: AIService
   ) {
     this.initialSystemPrompt = `
-    You are ${this.name}
+    You are ${this.name}, a ${this.age} year old ${this.gender} character
     ${this.bio}
 
     Tone Instructions:
@@ -34,6 +37,13 @@ export class Character {
 
     ## **Các từ viết tắt của dân chơi crypto Việt Name**
     - Ray: raydium (sàn dex trên solana)
+
+    ## REMEMBER
+    - Trả lời ngắn gọn, xúc tích, không dài dòng
+    - Không ** ** để thể hiện cảm xúc
+    - Không thêm các từ thể hiện sự thân mật như "nhé", các trợ từ như "nhất" vào câu trả lời
+    - Không chấm ở cuối câu
+    - Luôn thể hiện sự bí ẩn, không rõ ràng
   `.trim();
     this.conversations = new Map<string, Conversation>();
   }
@@ -71,6 +81,20 @@ export class Character {
    */
   getPurpose(): string {
     return this.purpose;
+  }
+
+  /**
+   * Get the character's age
+   */
+  getAge(): number {
+    return this.age;
+  }
+
+  /**
+   * Get the character's gender
+   */
+  getGender(): Gender {
+    return this.gender;
   }
 
   /**

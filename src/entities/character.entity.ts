@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
-
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+} from "typeorm";
+import { Gender } from "@/constants/enum";
 @Entity("characters")
 export class Character {
   @PrimaryGeneratedColumn("uuid")
@@ -31,4 +38,15 @@ export class Character {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @Column({ nullable: true })
+  age: number;
+
+  @Column({
+    type: "enum",
+    enum: Gender,
+    default: Gender.MALE,
+    nullable: true,
+  })
+  gender: Gender;
 }

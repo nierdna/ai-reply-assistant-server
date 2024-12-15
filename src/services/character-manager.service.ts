@@ -1,9 +1,10 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Character as CharacterEntity } from '../entities/character.entity';
-import { Character } from './character.service';
-import { AIService } from './ai.service';
+import { Injectable, OnModuleInit } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Character as CharacterEntity } from "../entities/character.entity";
+import { Character } from "./character.service";
+import { AIService } from "./ai.service";
+import { Gender } from "@/constants/enum";
 
 @Injectable()
 export class CharacterManager implements OnModuleInit {
@@ -32,6 +33,8 @@ export class CharacterManager implements OnModuleInit {
           entity.tone,
           entity.style,
           entity.purpose,
+          entity.age,
+          entity.gender,
           this.aiService
         );
         this.characters.set(entity.id, character);
@@ -49,6 +52,8 @@ export class CharacterManager implements OnModuleInit {
   async createCharacter(
     name: string,
     bio: string,
+    age: number,
+    gender: Gender,
     tone: string,
     style: string,
     purpose: string
@@ -57,6 +62,8 @@ export class CharacterManager implements OnModuleInit {
     const characterEntity = this.characterRepository.create({
       name,
       bio,
+      age,
+      gender,
       tone,
       style,
       purpose,
@@ -70,6 +77,8 @@ export class CharacterManager implements OnModuleInit {
       tone,
       style,
       purpose,
+      age,
+      gender,
       this.aiService
     );
     this.characters.set(characterEntity.id, character);
