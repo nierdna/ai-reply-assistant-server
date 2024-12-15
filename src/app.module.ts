@@ -24,6 +24,11 @@ import { aiConfig } from './configs/ai.config';
         database: configService.get("DB_DATABASE"),
         entities: [Character],
         synchronize: true,
+        ssl: configService.get("DB_HOST").includes("localhost")
+          ? false
+          : {
+              rejectUnauthorized: false,
+            },
       }),
       inject: [ConfigService],
     }),
