@@ -6,6 +6,12 @@ export class Character {
   id: string;
 
   @Column({ nullable: true })
+  name: string;
+
+  @Column({ nullable: true })
+  bio: string;
+
+  @Column({ nullable: true })
   tone: string;
 
   @Column({ nullable: true })
