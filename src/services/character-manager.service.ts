@@ -27,6 +27,8 @@ export class CharacterManager implements OnModuleInit {
 
       for (const entity of characterEntities) {
         const character = new Character(
+          entity.name,
+          entity.bio,
           entity.tone,
           entity.style,
           entity.purpose,
@@ -45,19 +47,31 @@ export class CharacterManager implements OnModuleInit {
   }
 
   async createCharacter(
+    name: string,
+    bio: string,
     tone: string,
     style: string,
     purpose: string
   ): Promise<CharacterEntity> {
     // Create and save character entity
     const characterEntity = this.characterRepository.create({
+      name,
+      bio,
+      tone,
       style,
       purpose,
     });
     await this.characterRepository.save(characterEntity);
 
     // Create and store character instance
-    const character = new Character(tone, style, purpose, this.aiService);
+    const character = new Character(
+      name,
+      bio,
+      tone,
+      style,
+      purpose,
+      this.aiService
+    );
     this.characters.set(characterEntity.id, character);
 
     return characterEntity;

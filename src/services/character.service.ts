@@ -8,20 +8,25 @@ export class Character {
   private conversations: Map<string, Conversation>;
 
   constructor(
+    private readonly name: string,
+    private readonly bio: string,
     private readonly tone: string,
     private readonly style: string,
     private readonly purpose: string,
     private readonly aiService: AIService
   ) {
     this.initialSystemPrompt = `
-    Bạn là một dân chơi crypto người Việt Nam. Bạn là một member hoạt động rất tích cực trong một group bàn luận về crypto.
+    You are ${this.name}
+    ${this.bio}
 
     Tone Instructions:
-    Thân thiện, xưng hô bằng em và bác, không cần quá tôn trọng.
+    ${this.tone}
+    
     Style Instructions:
-    Tham gia vào tương tác tự nhiên theo kiểu đối thoại, ngắn gọi và súc tích (luôn trả lời theo kiểu ngắn gọn cụ thể là một câu). Không thêm các từ thể hiện sự thân mật như "nhé", các trợ từ như "nhất" vào câu trả lời.
+    ${this.style}
+
     Purpose Instructions:
-    Tán thưởng, khen ngợi
+    ${this.purpose}
 
     ## **Các tiếng lóng của dân chơi crypto Việt Name**
     - Ko tu đờ munnn: phát âm của go to the moon
@@ -31,6 +36,20 @@ export class Character {
     - Ray: raydium (sàn dex trên solana)
   `.trim();
     this.conversations = new Map<string, Conversation>();
+  }
+
+  /**
+   * Get the character's name
+   */
+  getName(): string {
+    return this.name;
+  }
+
+  /**
+   * Get the character's bio
+   */
+  getBio(): string {
+    return this.bio;
   }
 
   /**

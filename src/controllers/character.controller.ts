@@ -8,6 +8,22 @@ class CreateCharacterDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
+    description: "The name of the character",
+    example: "John Doe",
+  })
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: "The bio of the character",
+    example: "John Doe is a friendly and helpful person",
+  })
+  bio: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
     description: "The tone of the character",
     example: "friendly and helpful",
   })
@@ -83,6 +99,8 @@ export class CharacterController {
       status: HttpStatus.CREATED,
       message: "Character created successfully",
       data: await this.characterManager.createCharacter(
+        createCharacterDto.name,
+        createCharacterDto.bio,
         createCharacterDto.tone,
         createCharacterDto.style,
         createCharacterDto.purpose
