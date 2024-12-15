@@ -12,7 +12,7 @@ export class CharacterManager implements OnModuleInit {
   constructor(
     @InjectRepository(CharacterEntity)
     private characterRepository: Repository<CharacterEntity>,
-    private aiService: AIService,
+    private aiService: AIService
   ) {
     this.characters = new Map<string, Character>();
   }
@@ -24,24 +24,31 @@ export class CharacterManager implements OnModuleInit {
   private async initializeCharacters() {
     try {
       const characterEntities = await this.characterRepository.find();
-      
+
       for (const entity of characterEntities) {
         const character = new Character(
+          entity.tone,
           entity.style,
           entity.purpose,
           this.aiService
         );
         this.characters.set(entity.id, character);
       }
-      
-      console.log(`Initialized ${this.characters.size} characters from database`);
+
+      console.log(
+        `Initialized ${this.characters.size} characters from database`
+      );
     } catch (error) {
-      console.error('Failed to initialize characters:', error);
+      console.error("Failed to initialize characters:", error);
       throw error;
     }
   }
 
-  async createCharacter(style: string, purpose: string): Promise<CharacterEntity> {
+  async createCharacter(
+    tone: string,
+    style: string,
+    purpose: string
+  ): Promise<CharacterEntity> {
     // Create and save character entity
     const characterEntity = this.characterRepository.create({
       style,
@@ -50,13 +57,17 @@ export class CharacterManager implements OnModuleInit {
     await this.characterRepository.save(characterEntity);
 
     // Create and store character instance
-    const character = new Character(style, purpose, this.aiService);
+    const character = new Character(tone, style, purpose, this.aiService);
     this.characters.set(characterEntity.id, character);
 
     return characterEntity;
   }
 
-  async generateResponse(characterId: string, chatId: string, prompt: string): Promise<string> {
+  async generateResponse(
+    characterId: string,
+    chatId: string,
+    prompt: string
+  ): Promise<string> {
     const character = this.characters.get(characterId);
     if (!character) {
       throw new Error(`Character with ID ${characterId} not found`);

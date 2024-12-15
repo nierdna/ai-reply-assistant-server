@@ -1,17 +1,41 @@
-import { Injectable } from '@nestjs/common';
-import { AIService } from './ai.service';
-import { Conversation } from './conversation.service';
+import { Injectable } from "@nestjs/common";
+import { AIService } from "./ai.service";
+import { Conversation } from "./conversation.service";
 
 @Injectable()
 export class Character {
+  private initialSystemPrompt: string;
   private conversations: Map<string, Conversation>;
 
   constructor(
+    private readonly tone: string,
     private readonly style: string,
     private readonly purpose: string,
-    private readonly aiService: AIService,
+    private readonly aiService: AIService
   ) {
+    this.initialSystemPrompt = `
+    Bạn là một dân chơi crypto người Việt Nam. Bạn là một member hoạt động rất tích cực trong một group bàn luận về crypto.
+
+    Tone Instructions:
+    Thân thiện, xưng hô bằng em và bác, không cần quá tôn trọng.
+    Tham gia vào tương tác tự nhiên theo kiểu đối thoại, ngắn gọi và súc tích (luôn trả lời theo kiểu ngắn gọn cụ thể là một câu). Không thêm các từ thể hiện sự thân mật như "nhé", các trợ từ như "nhất" vào câu trả lời.
+    Tán thưởng, khen ngợi
+
+    ## **Các tiếng lóng của dân chơi crypto Việt Name**
+    - Ko tu đờ munnn: phát âm của go to the moon
+    - Éo: nghĩa là không
+
+    ## **Các từ viết tắt của dân chơi crypto Việt Name**
+    - Ray: raydium (sàn dex trên solana)
+  `.trim();
     this.conversations = new Map<string, Conversation>();
+  }
+
+  /**
+   * Get the character's tone
+   */
+  getTone(): string {
+    return this.tone;
   }
 
   /**
@@ -37,8 +61,8 @@ export class Character {
     if (this.conversations.has(chatId)) {
       throw new Error(`Conversation with ID ${chatId} already exists`);
     }
-    
-    this.conversations.set(chatId, new Conversation());
+
+    this.conversations.set(chatId, new Conversation(this.initialSystemPrompt));
     return chatId;
   }
 
@@ -49,9 +73,12 @@ export class Character {
    */
   getConversation(chatId: string): Conversation {
     if (!this.conversations.has(chatId)) {
-      this.conversations.set(chatId, new Conversation());
+      this.conversations.set(
+        chatId,
+        new Conversation(this.initialSystemPrompt)
+      );
     }
-    
+
     return this.conversations.get(chatId) as Conversation;
   }
 
@@ -71,21 +98,20 @@ export class Character {
    */
   async generateResponse(chatId: string, prompt: string): Promise<string> {
     if (!prompt?.trim()) {
-      throw new Error('Prompt cannot be empty');
+      throw new Error("Prompt cannot be empty");
     }
 
     const conversation = this.getConversation(chatId);
-    conversation.addMessage('user', prompt);
+    conversation.addMessage("user", prompt);
 
     try {
       const response = await this.aiService.generateResponse(
-        conversation.getMessages()
+        conversation.getHistory()
       );
 
-      conversation.addMessage('assistant', response.content);
+      conversation.addMessage("assistant", response.content);
       return response.content;
     } catch (error: any) {
-      conversation.addMessage('system', 'Error generating response');
       throw new Error(`Failed to generate response: ${error.message}`);
     }
   }

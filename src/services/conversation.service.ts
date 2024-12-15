@@ -1,15 +1,30 @@
-import { Message } from '@/types/assistant';
-import { Injectable } from '@nestjs/common';
+import { Message } from "@/types/assistant";
 
-@Injectable()
 export class Conversation {
-  private messages: Array<Message> = [];
+  private history: Message[] = [];
 
-  addMessage(role: 'user' | 'assistant' | 'system', content: string) {
-    this.messages.push({ role, content });
+  constructor(private initialSystemPrompt: string) {
+    this.initialize();
   }
 
-  getMessages() {
-    return this.messages;
+  private initialize(): void {
+    this.history = [
+      {
+        role: "system",
+        content: this.initialSystemPrompt,
+      },
+    ];
+  }
+
+  addMessage(role: "user" | "assistant", content: string): void {
+    this.history.push({ role, content });
+  }
+
+  getHistory(): Message[] {
+    return [...this.history];
+  }
+
+  clear(): void {
+    this.initialize();
   }
 }
