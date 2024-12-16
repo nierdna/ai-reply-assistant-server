@@ -35,6 +35,7 @@ export class CharacterController {
       status: HttpStatus.CREATED,
       message: "Character created successfully",
       data: await this.characterManager.createCharacter(
+        createCharacterDto.username,
         createCharacterDto.name,
         createCharacterDto.bio,
         createCharacterDto.age,
@@ -46,7 +47,7 @@ export class CharacterController {
     };
   }
 
-  @Post(":id/chat")
+  @Post(":username/chat")
   @ApiOperation({ summary: "Send a message to a character" })
   @ApiResponse({
     status: 200,
@@ -60,14 +61,14 @@ export class CharacterController {
       status: HttpStatus.OK,
       message: "Character response",
       data: await this.characterManager.generateResponse(
-        params.id,
+        params.username,
         chatRequestDto.chatId,
         chatRequestDto.prompt
       ),
     };
   }
 
-  @Get(":id/conversation/:chatId")
+  @Get(":username/conversation/:chatId")
   @ApiOperation({ summary: "Get conversation history" })
   @ApiResponse({
     status: 200,
@@ -78,12 +79,12 @@ export class CharacterController {
       status: HttpStatus.OK,
       message: "Conversation history",
       data: this.characterManager
-        .getCharacter(params.id)
+        .getCharacter(params.username)
         .getConversation(params.chatId),
     };
   }
 
-  @Put(":id")
+  @Put(":username")
   @ApiOperation({ summary: "Update an existing character" })
   @ApiResponse({
     status: 200,
@@ -97,7 +98,7 @@ export class CharacterController {
       status: HttpStatus.OK,
       message: "Character updated successfully",
       data: await this.characterManager.updateCharacter(
-        params.id,
+        params.username,
         updateCharacterDto.name,
         updateCharacterDto.bio,
         updateCharacterDto.age,

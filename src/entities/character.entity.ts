@@ -5,12 +5,17 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  Index,
 } from "typeorm";
 import { Gender } from "@/constants/enum";
 @Entity("characters")
 export class Character {
   @PrimaryGeneratedColumn("uuid")
   id: string;
+
+  @Column({ nullable: true, unique: true })
+  @Index()
+  username: string;
 
   @Column({ nullable: true })
   name: string;

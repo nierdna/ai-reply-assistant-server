@@ -6,7 +6,6 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  IsUUID,
   IsIn,
   IsInt,
 } from "class-validator";
@@ -14,6 +13,14 @@ import { Type } from "class-transformer";
 
 // DTOs
 export class CreateCharacterDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: "The username of the character",
+    example: "john_doe",
+  })
+  username: string;
+
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
@@ -90,12 +97,13 @@ export class ChatRequestDto {
 }
 
 export class CharacterParamDto {
-  @IsUUID()
+  @IsString()
+  @IsNotEmpty()
   @ApiProperty({
-    description: "The unique identifier of the character",
-    example: "123e4567-e89b-12d3-a456-426614174000",
+    description: "The username of the character",
+    example: "john_doe",
   })
-  id: string;
+  username: string;
 }
 
 export class ConversationParamDto extends CharacterParamDto {

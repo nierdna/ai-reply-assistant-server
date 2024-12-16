@@ -37,7 +37,7 @@ export class CharacterManager implements OnModuleInit {
           entity.gender,
           this.aiService
         );
-        this.characters.set(entity.id, character);
+        this.characters.set(entity.username, character);
       }
 
       console.log(
@@ -50,6 +50,7 @@ export class CharacterManager implements OnModuleInit {
   }
 
   async createCharacter(
+    username: string,
     name: string,
     bio: string,
     age: number,
@@ -60,6 +61,7 @@ export class CharacterManager implements OnModuleInit {
   ): Promise<CharacterEntity> {
     // Create and save character entity
     const characterEntity = this.characterRepository.create({
+      username,
       name,
       bio,
       age,
@@ -81,40 +83,40 @@ export class CharacterManager implements OnModuleInit {
       gender,
       this.aiService
     );
-    this.characters.set(characterEntity.id, character);
+    this.characters.set(username, character);
 
     return characterEntity;
   }
 
   async generateResponse(
-    characterId: string,
+    username: string,
     chatId: string,
     prompt: string
   ): Promise<string> {
-    const character = this.characters.get(characterId);
+    const character = this.characters.get(username);
     if (!character) {
-      throw new Error(`Character with ID ${characterId} not found`);
+      throw new Error(`Character with username ${username} not found`);
     }
     return character.generateResponse(chatId, prompt);
   }
 
-  getCharacter(characterId: string): Character {
-    const character = this.characters.get(characterId);
+  getCharacter(username: string): Character {
+    const character = this.characters.get(username);
     if (!character) {
-      throw new Error(`Character with ID ${characterId} not found`);
+      throw new Error(`Character with username ${username} not found`);
     }
     return character;
   }
 
-  async deleteCharacter(characterId: string): Promise<void> {
+  async deleteCharacter(username: string): Promise<void> {
     // Soft delete from database
-    await this.characterRepository.softDelete(characterId);
+    await this.characterRepository.softDelete({ username });
     // Remove from memory
-    this.characters.delete(characterId);
+    this.characters.delete(username);
   }
 
   async updateCharacter(
-    characterId: string,
+    username: string,
     name?: string,
     bio?: string,
     age?: number,
@@ -125,11 +127,11 @@ export class CharacterManager implements OnModuleInit {
   ): Promise<CharacterEntity> {
     // Update character entity in database
     const characterEntity = await this.characterRepository.findOne({
-      where: { id: characterId },
+      where: { username },
     });
 
     if (!characterEntity) {
-      throw new Error(`Character with ID ${characterId} not found`);
+      throw new Error(`Character with username ${username} not found`);
     }
 
     // Update only defined properties
@@ -154,7 +156,7 @@ export class CharacterManager implements OnModuleInit {
       characterEntity.gender,
       this.aiService
     );
-    this.characters.set(characterId, character);
+    this.characters.set(username, character);
 
     return characterEntity;
   }
