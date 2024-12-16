@@ -20,6 +20,13 @@ export class CharacterManager implements OnModuleInit {
 
   async onModuleInit() {
     await this.initializeCharacters();
+    // const messages = [
+    //   { user: "Đạt", content: "Hôm nay có kèo gì ngon không em zai?" },
+    //   { user: "Nguyên", content: "Méo biết, có mấy con meme mới launch trên solana thôi" },
+    //   { user: "Quân", content: "Ừm, tôi cũng thấy có mấy con ngon phết" },
+    // ];
+    // const response = await this.characters.get("john_doe")?.generateResponseV2(messages);
+    // console.log(response);
   }
 
   private async initializeCharacters() {
@@ -98,6 +105,21 @@ export class CharacterManager implements OnModuleInit {
       throw new Error(`Character with username ${username} not found`);
     }
     return character.generateResponse(chatId, prompt);
+  }
+
+  // with topic analyze and response generate
+  async generateResponseV2(
+    username: string,
+    messages: {
+      user: string;
+      content: string;
+    }[]
+  ): Promise<string> {
+    const character = this.characters.get(username);
+    if (!character) {
+      throw new Error(`Character with username ${username} not found`);
+    }
+    return character.generateResponseV2(messages);
   }
 
   getCharacter(username: string): Character {

@@ -2,11 +2,16 @@ import { Injectable } from "@nestjs/common";
 import { AIService } from "./ai.service";
 import { Conversation } from "./conversation.service";
 import { Gender } from "@/constants/enum";
+import { TopicAnalysisService } from "./topic-analysis.service";
+import { ResponseGenerateService } from "./response-generate.service";
+import { SYSTEM_PROMPTS } from "@/configs/ai.config";
 
 @Injectable()
 export class Character {
   private initialSystemPrompt: string;
   private conversations: Map<string, Conversation>;
+  private topicAnalysisService: TopicAnalysisService;
+  private responseGenerateService: ResponseGenerateService;
 
   constructor(
     private readonly name: string,
@@ -20,6 +25,7 @@ export class Character {
   ) {
     this.initialSystemPrompt = `
     You are ${this.name}, a ${this.age} year old ${this.gender} character
+    ${SYSTEM_PROMPTS.RESPONSE_GENERATION}
     ${this.bio}
 
     Tone Instructions:
@@ -57,6 +63,15 @@ export class Character {
     - Luôn thể hiện sự bí ẩn, không rõ ràng
   `.trim();
     this.conversations = new Map<string, Conversation>();
+
+    this.topicAnalysisService = new TopicAnalysisService(
+      this.aiService,
+      SYSTEM_PROMPTS.TOPIC_DETECTION
+    );
+    this.responseGenerateService = new ResponseGenerateService(
+      this.aiService,
+      this.initialSystemPrompt
+    );
   }
 
   /**
@@ -166,6 +181,39 @@ export class Character {
       );
 
       conversation.addMessage("assistant", response.content);
+      return response.content;
+    } catch (error: any) {
+      throw new Error(`Failed to generate response: ${error.message}`);
+    }
+  }
+
+  /**
+   * Generate AI response V2 for a specific conversation with topic detection and response generation
+   * @param chatId - Unique identifier for the conversation
+   * @param messages - User input prompt
+   * @returns Promise<string> - AI generated response
+   */
+  async generateResponseV2(
+    messages: {
+      user: string;
+      content: string;
+    }[]
+  ): Promise<string> {
+    if (!messages?.length) {
+      throw new Error("Messages cannot be empty");
+    }
+
+    try {
+      const detectTopics =
+        await this.topicAnalysisService.generateResponse(messages);
+
+      console.log("✅ - detectTopics", detectTopics);
+
+      const response = await this.responseGenerateService.generateResponse(
+        messages,
+        detectTopics.content
+      );
+
       return response.content;
     } catch (error: any) {
       throw new Error(`Failed to generate response: ${error.message}`);

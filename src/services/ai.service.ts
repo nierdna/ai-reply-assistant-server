@@ -9,9 +9,7 @@ import { Inject } from "@nestjs/common";
 export class AIService extends BaseAIService {
   private openai: OpenAI;
 
-  constructor(
-    @Inject(ConfigService) readonly configService: ConfigService
-  ) {
+  constructor(@Inject(ConfigService) readonly configService: ConfigService) {
     super({
       apiKey: configService.get("ai.apiKey")!,
       baseURL: configService.get("ai.baseURL")!,
