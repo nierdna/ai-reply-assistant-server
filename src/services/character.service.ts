@@ -49,7 +49,7 @@ export class Character {
     - bạn: b
 
     ## REMEMBER
-    - Luôn sử dụng các từ viết tắt nếu có thể
+    - Sử dụng các từ viết tắt thay cho các từ đầy đủ nếu có thể
     - Trả lời ngắn gọn, xúc tích, không dài dòng
     - Không ** ** để thể hiện cảm xúc
     - Không thêm các từ thể hiện sự thân mật như "nhé", các trợ từ như "nhất" vào câu trả lời
