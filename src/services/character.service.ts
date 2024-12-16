@@ -188,12 +188,11 @@ export class Character {
   }
 
   /**
-   * Generate AI response V2 for a specific conversation with topic detection and response generation
-   * @param chatId - Unique identifier for the conversation
-   * @param messages - User input prompt
+   * Generate AI response to continue a conversation with topic detection and response generation
+   * @param messages - User input messages
    * @returns Promise<string> - AI generated response
    */
-  async generateResponseV2(
+  async generateResponseToContinueConversation(
     messages: {
       user: string;
       content: string;
@@ -206,8 +205,6 @@ export class Character {
     try {
       const detectTopics =
         await this.topicAnalysisService.generateResponse(messages);
-
-      console.log("✅ - detectTopics", detectTopics);
 
       const response = await this.responseGenerateService.generateResponse(
         messages,

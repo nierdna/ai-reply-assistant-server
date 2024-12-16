@@ -204,3 +204,24 @@ export class GetCharactersQueryDto {
   @Type(() => Number)
   limit: number = 10;
 }
+
+const messages = [
+  { user: "Đạt", content: "Hôm nay có kèo gì ngon không em zai?" },
+  {
+    user: "Nguyên",
+    content: "Méo biết, có mấy con meme mới launch trên solana thôi",
+  },
+  { user: "Quân", content: "Ừm, tôi cũng thấy có mấy con ngon phết" },
+];
+
+export class ContinuousChatRequestDto {
+  @ApiProperty({
+    description: "Array of messages in the conversation",
+    type: Array,
+    default: messages,
+  })
+  messages: {
+    user: string;
+    content: string;
+  }[];
+}

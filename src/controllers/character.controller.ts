@@ -5,6 +5,7 @@ import {
   ConversationParamDto,
   UpdateCharacterDto,
   GetCharactersQueryDto,
+  ContinuousChatRequestDto,
 } from "@/dtos/character.dto";
 import { CharacterManager } from "@/services/character-manager.service";
 import {
@@ -64,6 +65,26 @@ export class CharacterController {
         params.username,
         chatRequestDto.chatId,
         chatRequestDto.prompt
+      ),
+    };
+  }
+
+  @Post(":username/chat/conversation")
+  @ApiOperation({ summary: "Send conversation to a character" })
+  @ApiResponse({
+    status: 200,
+    description: "The character response for the conversation",
+  })
+  async continueConversation(
+    @Param() params: CharacterParamDto,
+    @Body() chatRequestDto: ContinuousChatRequestDto
+  ) {
+    return {
+      status: HttpStatus.OK,
+      message: "Character response",
+      data: await this.characterManager.generateResponseToContinueConversation(
+        params.username,
+        chatRequestDto.messages
       ),
     };
   }
