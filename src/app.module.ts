@@ -1,11 +1,12 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Character } from './entities/character.entity';
-import { CharacterController } from './controllers/character.controller';
-import { CharacterManager } from './services/character-manager.service';
-import { AIService } from './services/ai.service';
-import { aiConfig } from './configs/ai.config';
+import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Character } from "./entities/character.entity";
+import { CharacterController } from "./controllers/character.controller";
+import { CharacterManager } from "./services/character-manager.service";
+import { AIService } from "./services/ai.service";
+import { aiConfig } from "./configs/ai.config";
+import { LoggerModule } from "nestjs-pino";
 
 @Module({
   imports: [
@@ -33,6 +34,16 @@ import { aiConfig } from './configs/ai.config';
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([Character]),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        transport: {
+          target: "pino-pretty",
+          options: {
+            singleLine: true,
+          },
+        },
+      },
+    }),
   ],
   controllers: [CharacterController],
   providers: [CharacterManager, AIService],
