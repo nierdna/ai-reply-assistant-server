@@ -33,7 +33,7 @@ ${messageContext}
 Detected Topics:
 ${detectedTopics}
 
-Generate a relevant response to continue recent topic in the conversation:`,
+Generate a relevant response to continue popular topic in the conversation:`,
         },
       ],
       options
