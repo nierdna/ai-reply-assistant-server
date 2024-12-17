@@ -38,22 +38,20 @@ Detected Topics:
 ${detectedTopics}
 
 Dựa vào các topic đã được phân tích, chọn topic được nhắc đến nhiều nhất, generate một câu trả lời để tiếp tục conversation
+(nếu message cuối cùng của conversation cũng thuộc topic được nhắc đến, generate câu trả lời cho message cuối cùng)
 
 ## REMEMBER
 - Ưu tiên các topic call kèo, check meme, xác thực một cái gì đó
 - Ưu tiên các topic về Finance, cryptocurency, stock market
-- Do not repeat content included in Conversation
-- Do not repeat request any question in Conversation
-- KHÔNG DÙNG LẠI CÁC CÁC TỪ NGỮ CHỨA TRONG CONVERSATION
-- KHÔNG DÙNG LẠI CÁC CÁC TỪ NGỮ CHỨA TRONG CONVERSATION
-- KHÔNG DÙNG LẠI CÁC CÁC TỪ NGỮ CHỨA TRONG CONVERSATION
-
+- KHÔNG BAO GIỜ ĐƯỢC LẶP LẠI Ý CỦA NGƯỜI KHÁC
+- KHÔNG BAO GIỜ ĐƯỢC LẠI CÁC CÁC TỪ NGỮ CHỨA TRONG CONVERSATION
+- Nếu không có topic nào được nhắn đến, than vãn một câu không rõ ràng. Ví dụ: "thị trường chán thật"
 `.trim(),
         },
       ],
       {
         ...options,
-        temperature: 0.7,
+        temperature: 0.8,
       }
     );
 
