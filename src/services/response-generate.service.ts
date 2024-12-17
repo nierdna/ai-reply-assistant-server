@@ -25,7 +25,15 @@ export class ResponseGenerateService {
         { role: "system", content: this.systemPrompts },
         {
           role: "user",
-          content: `Given the following conversation and detected topics:\n\nConversation:\n${messageContext}\n\nDetected Topics:\n${detectedTopics}\n\nGenerate a relevant response to continue the conversation:`,
+          content: `Given the following conversation and detected topics:
+
+Conversation:
+${messageContext}
+
+Detected Topics:
+${detectedTopics}
+
+Generate a relevant response to continue recent topic in the conversation:`,
         },
       ],
       options
