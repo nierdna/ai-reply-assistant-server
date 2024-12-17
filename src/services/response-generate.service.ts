@@ -20,6 +20,10 @@ export class ResponseGenerateService {
     const messageContext = messages
       .map((msg) => `${msg.user}: ${msg.content}`)
       .join("\n");
+    const debug = false;
+
+    debug && console.log(messageContext, "messageContext");
+    debug && console.log(detectedTopics, "detectedTopics");
     const response = await this.aiService.generateResponse(
       [
         { role: "system", content: this.systemPrompts },
@@ -33,11 +37,22 @@ ${messageContext}
 Detected Topics:
 ${detectedTopics}
 
-Generate a relevant response to continue popular topic in the conversation:`,
+Generate a relevant response to continue popular topic in the conversation
+
+## REMEMBER
+Do not repeat content included in Conversation
+
+`,
         },
       ],
-      options
+      {
+        ...options,
+        temperature: 0.8,
+      }
     );
+
+    debug && console.log(response, "✅ - response");
+
     return response;
   }
 }
