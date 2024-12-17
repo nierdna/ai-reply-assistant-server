@@ -46,8 +46,9 @@ export class AIService extends BaseAIService {
   }
 
   private formatResponse(completion: ChatCompletion): AIResponse {
+    const content = completion.choices[0].message.content || "";
     return {
-      content: completion.choices[0].message.content || "",
+      content: content.charAt(0).toLowerCase() + content.slice(1),
       usage: completion.usage
         ? {
             promptTokens: completion.usage.prompt_tokens,
