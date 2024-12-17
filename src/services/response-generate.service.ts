@@ -42,7 +42,7 @@ Generate a relevant response to continue popular topic in the conversation
 ## REMEMBER
 Do not repeat content included in Conversation
 
-`,
+`.trim(),
         },
       ],
       {
