@@ -37,17 +37,23 @@ ${messageContext}
 Detected Topics:
 ${detectedTopics}
 
-Generate a relevant response to continue popular topic in the conversation
+Dựa vào các topic đã được phân tích, chọn topic được nhắc đến nhiều nhất, generate một câu trả lời để tiếp tục conversation
 
 ## REMEMBER
-Do not repeat content included in Conversation
+- Ưu tiên các topic call kèo, check meme, xác thực một cái gì đó
+- Ưu tiên các topic về Finance, cryptocurency, stock market
+- Do not repeat content included in Conversation
+- Do not repeat request any question in Conversation
+- KHÔNG DÙNG LẠI CÁC CÁC TỪ NGỮ CHỨA TRONG CONVERSATION
+- KHÔNG DÙNG LẠI CÁC CÁC TỪ NGỮ CHỨA TRONG CONVERSATION
+- KHÔNG DÙNG LẠI CÁC CÁC TỪ NGỮ CHỨA TRONG CONVERSATION
 
 `.trim(),
         },
       ],
       {
         ...options,
-        temperature: 0.8,
+        temperature: 0.7,
       }
     );
 
