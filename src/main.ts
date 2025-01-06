@@ -8,7 +8,7 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors({
-    origin: "*",
+    // origin: "*",
   });
 
   // Use Pino Logger
